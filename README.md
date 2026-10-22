@@ -1,30 +1,20 @@
-# Labyrinthe
+<div align="center">
 
-> A desktop application to generate, explore and manage mazes: procedural generation across 10 difficulty levels, an interactive player view, user accounts, a personal dashboard and an admin panel.
+<img src="./.github/banner.svg" alt="Labyrinthe" width="100%">
 
-![Electron](https://img.shields.io/badge/Electron-41-47848F?style=flat-square&logo=electron&logoColor=white)
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
-![SQLite](https://img.shields.io/badge/SQLite-better--sqlite3-003B57?style=flat-square&logo=sqlite&logoColor=white)
-![License](https://img.shields.io/badge/license-ISC-blue?style=flat-square)
+**A desktop application to generate, explore and manage mazes: procedural generation across 10 difficulty levels, an interactive player view, user accounts, a personal dashboard and an admin panel.**
 
----
+![Electron](https://img.shields.io/badge/Electron-41-47848F?style=flat-square&logo=electron&logoColor=white) ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white) ![SQLite](https://img.shields.io/badge/SQLite-better--sqlite3-003B57?style=flat-square&logo=sqlite&logoColor=white) ![License](https://img.shields.io/badge/license-ISC-blue?style=flat-square)
 
-## Table of contents
+[About](#-about) · [Features](#-features) · [Technical architecture](#-technical-architecture) · [Getting started](#-getting-started) · [Tech stack](#-tech-stack)
 
-- [About](#about)
-- [Features](#features)
-- [Technical architecture](#technical-architecture)
-- [Getting started](#getting-started)
-- [Project structure](#project-structure)
-- [Security notes](#security-notes)
-- [Roadmap](#roadmap)
-- [Credits](#credits)
+</div>
 
-## About
+## 📖 About
 
 Labyrinthe is a JavaScript desktop app built on **Electron**. It combines procedural maze generation, an interactive exploration view and a complete user-management system. The generation algorithm adapts to the chosen difficulty level.
 
-## Features
+## ✨ Features
 
 ### 🎮 Players
 - **Procedural generation** — every maze is unique.
@@ -43,7 +33,13 @@ Labyrinthe is a JavaScript desktop app built on **Electron**. It combines proced
 - **Electron isolation** — a `preload` script is the only bridge for inter-process communication (IPC).
 - **Local persistence** — embedded SQLite database (`better-sqlite3`).
 
-## Technical architecture
+## 🏗️ Technical architecture
+
+```mermaid
+flowchart LR
+    UI["🖼️ Renderer<br/>HTML · CSS · JS"] -->|IPC via preload.js| MAIN["⚙️ Main process<br/>auth · admin · maze engine"]
+    MAIN --> DB[("SQLite<br/>better-sqlite3")]
+```
 
 The project separates business logic, data access and user interface.
 
@@ -72,7 +68,7 @@ Node.js running inside Electron.
 ### Database
 `database.js` wraps SQLite and stores users and scores synchronously.
 
-## Getting started
+## 🚀 Getting started
 
 **Prerequisites:** Node.js 14+ and npm.
 
@@ -85,7 +81,7 @@ npm start
 
 If the native SQLite module does not match your Electron version, run `npm run rebuild`.
 
-## Project structure
+## 🗂️ Project structure
 
 ```text
 labyrinthe/
@@ -101,26 +97,30 @@ labyrinthe/
 
 The database file `labyrinthe.db` is generated at first launch and is git-ignored.
 
-## Security notes
+## 🛡️ Security notes
 
 - Passwords are hashed with bcrypt before being stored.
 - On first launch the database is seeded with **demo accounts** (`admin` and `guest`). They exist for local testing only — change their passwords or remove them before any real use.
 
-## Roadmap
+## 🛣️ Roadmap
 
 - **Gameplay** — timer and a global scoreboard.
 - **Content** — export (PNG/JSON) and import of custom mazes.
 - **UI/UX** — dark, light and high-contrast themes.
 - **Multiplayer** — a local-network "maze race" mode.
 
-## Credits
+## 👥 Credits
 
 Team project. The original repository is [Michi-esc/Labyrinthe](https://github.com/Michi-esc/Labyrinthe); this copy is kept here as part of my portfolio.
 
-## Tech stack
+## 🧰 Tech stack
 
 Electron · JavaScript (Node.js) · HTML/CSS · SQLite (`better-sqlite3`) · bcryptjs
 
 ---
 
-**Author** — Konaté Adama · [github.com/DaskoStudio](https://github.com/DaskoStudio)
+<div align="center">
+
+<sub>Built by <a href="https://github.com/DaskoStudio"><b>Konaté Adama</b></a> · <a href="https://github.com/DaskoStudio?tab=repositories">More projects</a></sub>
+
+</div>
