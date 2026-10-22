@@ -1,162 +1,126 @@
-<div align="center">
-  <img src="https://via.placeholder.com/150x150.png?text=Labyrinthe+Icon" alt="Labyrinthe Logo" width="120" height="120">
-  
-  <h1>🧭 Labyrinthe</h1>
+# Labyrinthe
 
-  <p><strong>Application desktop avancée de génération, d'exploration et de gestion de labyrinthes.</strong></p>
+> A desktop application to generate, explore and manage mazes: procedural generation across 10 difficulty levels, an interactive player view, user accounts, a personal dashboard and an admin panel.
 
-  <p>
-    <img src="https://img.shields.io/badge/Electron-41.3.0-47848F?style=for-the-badge&logo=electron&logoColor=white" alt="Electron Version">
-    <img src="https://img.shields.io/badge/Node.js-%3E%3D14.0.0-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js Version">
-    <img src="https://img.shields.io/badge/SQLite-12.9.0-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite Version">
-    <img src="https://img.shields.io/badge/License-ISC-blue?style=for-the-badge" alt="License ISC">
-  </p>
-</div>
+![Electron](https://img.shields.io/badge/Electron-41-47848F?style=flat-square&logo=electron&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-better--sqlite3-003B57?style=flat-square&logo=sqlite&logoColor=white)
+![License](https://img.shields.io/badge/license-ISC-blue?style=flat-square)
 
 ---
 
-## 📖 À propos du projet
+## Table of contents
 
-**Labyrinthe** est une solution complète développée en JavaScript s'appuyant sur le framework **Electron**. Elle offre une expérience riche mêlant la génération procédurale de labyrinthes, une interface d'exploration interactive et un système complet de gestion des utilisateurs.
+- [About](#about)
+- [Features](#features)
+- [Technical architecture](#technical-architecture)
+- [Getting started](#getting-started)
+- [Project structure](#project-structure)
+- [Security notes](#security-notes)
+- [Roadmap](#roadmap)
+- [Credits](#credits)
 
-Ce projet se distingue par son approche modulaire et ses algorithmes de génération dynamique adaptés au niveau de difficulté choisi.
+## About
 
----
+Labyrinthe is a JavaScript desktop app built on **Electron**. It combines procedural maze generation, an interactive exploration view and a complete user-management system. The generation algorithm adapts to the chosen difficulty level.
 
-## ✨ Fonctionnalités Clés
+## Features
 
-Nous avons structuré les fonctionnalités en plusieurs catégories distinctes pour répondre aux besoins de chaque type d'utilisateur.
+### 🎮 Players
+- **Procedural generation** — every maze is unique.
+- **10 difficulty levels** — from an easy stroll (level 1) to an extreme orientation challenge (level 10).
+- **Interactive exploration** — smooth controls from the entrance to the exit.
+- **Personal dashboard** — your statistics, your games and your solving times.
 
-### 🎮 Expérience de Jeu (Joueurs)
-* **Génération Procédurale** : Chaque labyrinthe est unique.
-* **10 Niveaux de Difficulté** : D'une balade de santé (Niveau 1) à un défi d'orientation extrême (Niveau 10).
-* **Exploration Interactive** : Contrôles fluides pour naviguer du point d'entrée à la sortie.
-* **Tableau de Bord Personnel** : Suivi de vos statistiques, de vos parties et de vos temps de résolution.
+### ⚙️ Administration
+- **Dedicated admin panel** for managing the platform.
+- **User management** — view, edit and delete accounts.
+- **Global statistics** — an overview of how the app is used.
 
-### ⚙️ Administration (Gestionnaires)
-* **Panneau d'Administration Dédié** : Interface sécurisée pour gérer la plateforme.
-* **Gestion des Utilisateurs** : Visualisation, édition et suppression des comptes.
-* **Statistiques Globales** : Vue d'ensemble de l'utilisation de l'application.
+### 🛡️ Security and system
+- **Authentication** — sign-in and registration with session persistence.
+- **Passwords hashed with bcrypt** (`bcryptjs`).
+- **Electron isolation** — a `preload` script is the only bridge for inter-process communication (IPC).
+- **Local persistence** — embedded SQLite database (`better-sqlite3`).
 
-### 🛡️ Sécurité & Système
-* **Authentification Complète** : Système de connexion et d'inscription avec persistance de session.
-* **Isolation Electron** : Utilisation de scripts `preload` sécurisés pour la communication inter-processus (IPC).
-* **Persistance Locale** : Base de données SQLite embarquée (`better-sqlite3`) pour une sauvegarde rapide et fiable des données.
+## Technical architecture
 
----
+The project separates business logic, data access and user interface.
 
-## 🏗️ Architecture Technique
+### Renderer process (frontend)
+Plain HTML, CSS and JavaScript.
+- `renderer/index.html` — the views (login, dashboard, editor, admin).
+- `renderer/app.js` — client-side logic and IPC calls.
+- `renderer/style.css` — styling.
 
-Le projet repose sur une architecture moderne séparant clairement la logique métier, l'accès aux données et l'interface utilisateur.
+### Main process (backend)
+Node.js running inside Electron.
+- `main.js` — application and window lifecycle.
+- `auth.js` — authentication and sessions.
+- `admin.js` — administration features.
+- `preload.js` — secure bridge between renderer and main process.
 
-### 🖥️ Frontend (Renderer Process)
-Interface utilisateur réactive et intuitive développée en technologies web standard (HTML, CSS, JS).
-* `renderer/index.html` : Point d'entrée des vues (Login, Dashboard, Éditeur, Admin).
-* `renderer/app.js` : Logique applicative côté client et communication IPC.
-* `renderer/style.css` : Design system moderne et responsive.
+### Maze engine
+`labyrinth.js` implements different algorithms depending on difficulty:
 
-### ⚙️ Backend (Main Process)
-Logique principale propulsée par Node.js via Electron.
-* `main.js` : Gestion du cycle de vie de l'application et des fenêtres.
-* `auth.js` : Contrôleurs d'authentification et gestion des sessions.
-* `admin.js` : Contrôleurs pour les fonctionnalités d'administration.
+| Levels | Algorithm |
+|---|---|
+| 1–3 | **Prim's algorithm** |
+| 4–7 | **Recursive backtracker** |
+| 8–10 | **Hybrid with complex dead ends** |
 
-### 🧠 Moteur Algorithmique
-* `labyrinth.js` : Cœur du système. Implémente divers algorithmes selon la difficulté :
-  * **Algorithme de Prim** : Pour les niveaux simples (1-3).
-  * **Recursive Backtracker** : Pour les niveaux intermédiaires (4-7).
-  * **Hybride / Impasses complexes** : Pour les niveaux difficiles (8-10).
+### Database
+`database.js` wraps SQLite and stores users and scores synchronously.
 
-### 💾 Base de données
-* `database.js` : Interface avec SQLite gérant la persistance des utilisateurs et des scores de manière synchrone et performante.
+## Getting started
 
----
+**Prerequisites:** Node.js 14+ and npm.
 
-## 🚀 Installation & Démarrage
-
-### Prérequis
-* [Node.js](https://nodejs.org/) (Version 14.0.0 ou supérieure)
-* npm (inclus avec Node.js) ou yarn
-
-### Guide pas à pas
-
-1. **Cloner le dépôt**
-   ```bash
-   git clone https://github.com/Michi-esc/Labyrinthe.git
-   cd Labyrinthe
-   ```
-
-2. **Installer les dépendances**
-   ```bash
-   npm install
-   ```
-
-3. **Lancer l'application**
-   ```bash
-   npm start
-   ```
-   *L'application va compiler et lancer la fenêtre Electron.*
-
----
-
-## 📁 Structure du Répertoire
-
-```text
-Labyrinthe/
-├── package.json          # Dépendances et configuration npm
-├── main.js               # Entrée Electron (Main Process)
-├── preload.js            # Script pont sécurisé (IPC)
-├── labyrinth.js          # Moteur de génération des labyrinthes
-├── auth.js               # Gestionnaire d'authentification
-├── admin.js              # Gestionnaire du panel administrateur
-├── database.js           # Configuration SQLite
-├── labyrinthe.db         # Fichier de base de données (généré)
-└── renderer/             # Fichiers de l'interface (Frontend)
-    ├── index.html
-    ├── app.js
-    └── style.css
+```bash
+git clone https://github.com/DaskoStudio/labyrinthe.git
+cd labyrinthe
+npm install
+npm start
 ```
 
+If the native SQLite module does not match your Electron version, run `npm run rebuild`.
+
+## Project structure
+
+```text
+labyrinthe/
+├── package.json     Dependencies and npm scripts
+├── main.js          Electron entry point (main process)
+├── preload.js       Secure IPC bridge
+├── labyrinth.js     Maze generation engine
+├── auth.js          Authentication
+├── admin.js         Admin panel logic
+├── database.js      SQLite setup and queries
+└── renderer/        User interface (index.html, app.js, style.css)
+```
+
+The database file `labyrinthe.db` is generated at first launch and is git-ignored.
+
+## Security notes
+
+- Passwords are hashed with bcrypt before being stored.
+- On first launch the database is seeded with **demo accounts** (`admin` and `guest`). They exist for local testing only — change their passwords or remove them before any real use.
+
+## Roadmap
+
+- **Gameplay** — timer and a global scoreboard.
+- **Content** — export (PNG/JSON) and import of custom mazes.
+- **UI/UX** — dark, light and high-contrast themes.
+- **Multiplayer** — a local-network "maze race" mode.
+
+## Credits
+
+Team project. The original repository is [Michi-esc/Labyrinthe](https://github.com/Michi-esc/Labyrinthe); this copy is kept here as part of my portfolio.
+
+## Tech stack
+
+Electron · JavaScript (Node.js) · HTML/CSS · SQLite (`better-sqlite3`) · bcryptjs
+
 ---
 
-## 🗺️ Feuille de Route (Roadmap)
-
-Nous avons de grandes ambitions pour l'évolution de **Labyrinthe**. Voici les prochaines étapes prévues :
-
-* **[Sécurité]** Implémentation du hachage `bcrypt` pour les mots de passe.
-* **[Gameplay]** Ajout d'un chronomètre et d'un système de scoring mondial.
-* **[Fonctionnalité]** Possibilité d'exporter (PNG/JSON) et d'importer des labyrinthes personnalisés.
-* **[UI/UX]** Support de thèmes (Sombre/Clair/Haut Contraste).
-* **[Multijoueur]** Mode "Course de Labyrinthe" en réseau local.
-
----
-
-## 🤝 Contribution
-
-Les contributions font la force de la communauté open source ! Si vous souhaitez améliorer Labyrinthe, voici comment procéder :
-
-1. Faites un Fork du projet
-2. Créez votre branche de fonctionnalité (`git checkout -b feature/IncroyableFonctionnalite`)
-3. Commitez vos changements (`git commit -m 'Ajout d'une IncroyableFonctionnalite'`)
-4. Poussez vers la branche (`git push origin feature/IncroyableFonctionnalite`)
-5. Ouvrez une **Pull Request**
-
-N'hésitez pas à ouvrir une *Issue* pour discuter des changements majeurs que vous souhaitez apporter.
-
----
-
-## 📄 Licence
-
-Ce projet est distribué sous la licence **ISC**. Consultez le fichier `package.json` pour plus d'informations.
-
----
-
-<div align="center">
-  <b>Développé avec ❤️ par la communauté.</b><br>
-  <a href="https://github.com/Michi-esc/Labyrinthe/issues">Signaler un bug</a> • 
-  <a href="https://github.com/Michi-esc/Labyrinthe">Voir le code source</a>
-</div>
-
-## 👤 Auteur
-
-Konaté Adama (@DaskoStudio) — Ynov Campus
+**Author** — Konaté Adama · [github.com/DaskoStudio](https://github.com/DaskoStudio)
