@@ -156,3 +156,7 @@ Ce projet est distribué sous la licence **ISC**. Consultez le fichier `package.
   <a href="https://github.com/Michi-esc/Labyrinthe/issues">Signaler un bug</a> • 
   <a href="https://github.com/Michi-esc/Labyrinthe">Voir le code source</a>
 </div>
+
+## 👤 Auteur
+
+Konaté Adama (@DaskoStudio) — Ynov Campus
