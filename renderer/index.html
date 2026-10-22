@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MazeManager Pro</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app-background"></div>
+    
+    <!-- VUE : Connexion -->
+    <div id="view-login" class="view active">
+        <div class="login-card glass-panel">
+            <div class="logo-glow"></div>
+            <h1>MazeManager Pro</h1>
+
+            <!-- Formulaire de connexion -->
+            <div id="form-login">
+                <p>Veuillez vous identifier pour accéder au système</p>
+                <div class="form-group">
+                    <label for="username">Identifiant</label>
+                    <input type="text" id="username" placeholder="Nom d'utilisateur">
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" placeholder="Mot de passe">
+                </div>
+                <button id="btn-login" class="btn-primary btn-glow">Se connecter</button>
+                <button id="btn-guest" class="btn-secondary btn-block" style="margin-top: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">🎮 Jouer sans connexion (Mode Invité)</button>
+                <p class="auth-switch">Pas encore de compte ? <a href="#" id="link-to-register">S'inscrire</a></p>
+            </div>
+
+            <!-- Formulaire d'inscription -->
+            <div id="form-register" style="display:none;">
+                <p>Créer un nouveau compte explorateur</p>
+                <div class="form-group">
+                    <label for="reg-username">Identifiant</label>
+                    <input type="text" id="reg-username" placeholder="Minimum 3 caractères">
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Mot de passe</label>
+                    <input type="password" id="reg-password" placeholder="Minimum 6 caractères">
+                </div>
+                <div class="form-group">
+                    <label for="reg-password-confirm">Confirmer le mot de passe</label>
+                    <input type="password" id="reg-password-confirm" placeholder="Répéter le mot de passe">
+                </div>
+                <button id="btn-register" class="btn-primary btn-glow">Créer le compte</button>
+                <p class="auth-switch">Déjà un compte ? <a href="#" id="link-to-login">Se connecter</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- VUE : Dashboard -->
+    <div id="view-dashboard" class="view">
+        <header class="app-header glass-panel">
+            <div class="header-brand">
+                <span class="brand-icon">✧</span>
+                <h2>Tableau de bord</h2>
+            </div>
+            <div class="header-actions">
+                <button id="btn-admin" class="btn-outline-primary" style="display: none;">Panel Admin</button>
+                <button id="btn-new-maze" class="btn-success btn-glow">+ Nouveau Labyrinthe</button>
+                <button id="btn-logout" class="btn-outline-danger">Déconnexion</button>
+            </div>
+        </header>
+        <main class="dashboard-content">
+            <div class="table-container glass-panel">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nom du Labyrinthe</th>
+                            <th>Niveau de Difficulté</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="maze-table-body">
+                        <!-- Injecté par JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- VUE : Éditeur de Labyrinthe -->
+    <div id="view-editor" class="view">
+        <header class="app-header glass-panel">
+            <div class="header-brand">
+                <button id="btn-back" class="btn-icon">←</button>
+                <h2 id="editor-title">Créer / Éditer un Labyrinthe</h2>
+            </div>
+        </header>
+        <main class="editor-layout">
+            <!-- Panneau Latéral (Édition & Contrôle) -->
+            <aside class="editor-sidebar glass-panel">
+                <form id="maze-form" class="editor-form">
+                    <input type="hidden" id="maze-id">
+                    <div class="form-group">
+                        <label for="maze-name">Nom du labyrinthe</label>
+                        <input type="text" id="maze-name" required placeholder="Ex: Le Dédale Oublié">
+                    </div>
+                    <div class="form-group range-group">
+                        <label for="maze-difficulty">Difficulté : <span id="difficulty-val" class="highlight-text">5</span>/10</label>
+                        <input type="range" id="maze-difficulty" min="1" max="10" value="5" class="modern-range">
+                    </div>
+                    <button type="submit" class="btn-primary btn-block btn-glow">Sauvegarder</button>
+                </form>
+                
+                <hr class="sidebar-divider">
+                
+                <div class="algorithm-controls">
+                    <h3>Génération & Résolution</h3>
+                    <button id="btn-generate" class="btn-secondary btn-block">Générer le Labyrinthe</button>
+                    <button id="btn-solve" class="btn-secondary btn-block">Résoudre (IA)</button>
+                </div>
+
+                <div class="game-controls">
+                    <button id="btn-play-mode" class="btn-success btn-block btn-glow">Démarrer l'aventure</button>
+                </div>
+            </aside>
+
+            <!-- Zone de Rendu (responsive) -->
+            <section class="editor-canvas-container">
+                <div class="canvas-wrapper glass-panel">
+                    <canvas id="maze-canvas"></canvas>
+                </div>
+                
+                <!-- Interface superposée (Overlay) du Mode Jeu -->
+                <div id="game-overlay" class="game-overlay glass-panel" style="display: none;">
+                    <div class="overlay-stats">
+                        <span class="icon">🚶</span>
+                        <span id="overlay-steps">Pas: 0</span>
+                    </div>
+                    <button id="btn-quit-game" class="btn-danger btn-sm">Quitter</button>
+                </div>
+
+                <!-- Modal de Victoire -->
+                <div id="victory-modal" class="victory-modal" style="display: none;">
+                    <div class="victory-box glass-panel glow-effect">
+                        <div class="trophy-icon">🏆</div>
+                        <h1>Niveau Complété !</h1>
+                        <p id="victory-message">Vous avez trouvé la sortie du labyrinthe.</p>
+                        <div class="victory-stats">
+                            <p>Mouvements : <strong id="victory-steps" class="highlight-text">0</strong></p>
+                        </div>
+                        <button id="btn-victory-continue" class="btn-success btn-large btn-glow">Continuer</button>
+                    </div>
+                    <canvas id="confetti-canvas"></canvas>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- VUE : Administration -->
+    <div id="view-admin" class="view">
+        <header class="app-header glass-panel">
+            <div class="header-brand">
+                <button id="btn-back-from-admin" class="btn-icon">←</button>
+                <h2>Centre de Commandement</h2>
+            </div>
+        </header>
+        <main class="admin-content">
+            <section class="admin-stats">
+                <div class="stat-card glass-panel">
+                    <div class="stat-icon">🗺️</div>
+                    <div class="stat-info">
+                        <h3>Labyrinthes Créés</h3>
+                        <p id="stat-total-mazes" class="stat-number">0</p>
+                    </div>
+                </div>
+                <div class="stat-card glass-panel">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <h3>Explorateurs Actifs</h3>
+                        <p id="stat-active-users" class="stat-number">0</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="admin-users glass-panel table-container">
+                <h3>Gestion des Comptes</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Utilisateur</th>
+                            <th>Rôle</th>
+                            <th>Créations</th>
+                            <th>Administration</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <!-- Injecté par JavaScript -->
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <!-- Composants d'UI Globaux -->
+    <div id="toast-container" class="toast-container"></div>
+    
+    <div id="confirm-modal" class="victory-modal" style="display: none;">
+        <div class="victory-box glass-panel">
+            <h2 style="margin-bottom: 15px; color: var(--text-main);">Confirmation</h2>
+            <p id="confirm-message" style="margin-bottom: 25px; color: var(--text-muted);"></p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button id="btn-confirm-cancel" class="btn-secondary">Annuler</button>
+                <button id="btn-confirm-ok" class="btn-danger btn-glow">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bouton Theme Toggle -->
+    <button id="theme-toggle" class="theme-toggle-btn" title="Basculer le thème">🌓</button>
+
+    <script src="../labyrinth.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

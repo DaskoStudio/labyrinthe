@@ -1,0 +1,15 @@
+# Node / Electron
+node_modules/
+dist/
+
+# Base de données locale
+*.db
+*.sqlite3
+
+# Secrets
+.env
+
+# OS / éditeur
+.DS_Store
+.idea/
+.vscode/
